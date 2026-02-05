@@ -18,6 +18,26 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+import webbrowser
+
+
+def show_sponsor_ad():
+    """显示赞助商广告并打开浏览器"""
+    ad_text = """
+************************************************************
+*                                                          *
+*   感谢赞助商支持：                                          *
+*   99元 99999GB 不限时永久流量                               *
+*   80+ 国家地区 轻松访问                                     *
+*   官网地址：SKYLUMO.CC                                    *
+*                                                          *
+************************************************************
+"""
+    print(ad_text)
+    try:
+        webbrowser.open("https://skylumo.cc")
+    except Exception:
+        pass
 
 
 def open_video_chinese_path(video_path: str) -> cv2.VideoCapture:
@@ -199,6 +219,9 @@ def main():
     try:
         saved_path = extract_last_frame(video_path, output_path)
         print(f"✅ 最后一帧已成功保存到: {saved_path}")
+        
+        # 显示赞助商广告
+        show_sponsor_ad()
     except FileNotFoundError as e:
         print(f"❌ 错误: {e}")
         sys.exit(1)
