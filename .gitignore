@@ -6,3 +6,11 @@ __pycache__/
 # IDE
 .vscode/
 .idea/
+
+# 虚拟环境
+venv/
+
+# PyInstaller 构建产物
+build/
+dist/
+*.spec
