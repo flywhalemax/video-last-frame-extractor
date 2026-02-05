@@ -27,82 +27,72 @@ _请复制此地址在浏览器中打开：_ `SKYLUMO.CC`
 
 ---
 
-
-一个简单的工具，用于从视频文件中提取最后一帧并保存为图片。支持多种视频格式，支持中文路径，完美解决 OpenCV 对中文支持不佳的问题。
+一个简单的工具，用于从视频文件中提取最后一帧并保存为图片。**支持 Windows、macOS、Linux 三大平台**。
 
 [![构建状态](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
 
-## 📥 下载与运行 (推荐：.exe 绿色版)
+## 📥 下载与运行
 
-1. 前往 [Releases](https://github.com/flywhalemax/video-last-frame-extractor/releases) 页面下载最新的 `VideoLastFrameExtractor.exe`。
-2. **运行说明**：
-   - 双击运行时，如果出现 **"Windows 已保护你的电脑"** 提示：
-     - 点击 **“更多信息”**。
-     - 点击 **“仍要运行”** 即可。
-   - 这是因为程序未经过昂贵的开发者签名，属于正常现象。
+前往 [Releases](https://github.com/flywhalemax/video-last-frame-extractor/releases) 下载对应平台的可执行文件：
 
----
+| 平台 | 文件名 | 运行方式 |
+|------|--------|----------|
+| **Windows** | `VideoLastFrameExtractor.exe` | 双击运行或拖拽视频文件到 exe 上 |
+| **macOS** | `VideoLastFrameExtractor-macos` | 终端运行：`chmod +x 文件名 && ./文件名 video.mp4` |
+| **Linux** | `VideoLastFrameExtractor-linux` | 终端运行：`chmod +x 文件名 && ./文件名 video.mp4` |
 
-## 🚀 快速开始 (源码运行版)
-
-您可以直接使用源码提供的 `run.bat` 脚本，它会自动处理所有环境配置：
-
-1. **直接将视频文件拖拽到 `run.bat` 文件上**。
-2. 首次运行时，脚本会自动创建虚拟环境并安装所需的运行库（需联网且系统已安装 Python）。
-3. 稍等片刻，即可在视频同目录下生成最后一帧图片。
+> **Windows 用户注意**：首次运行如出现 "Windows 已保护你的电脑" 提示，点击 **"更多信息"** → **"仍要运行"** 即可。
 
 ---
 
-## 💻 开发者部署 (源代码运行)
+## 🚀 快速开始 (源码运行)
 
-如果您希望在开发环境运行，请参考以下步骤：
+1. **直接将视频文件拖拽到 `run.bat` 文件上**（仅 Windows）
+2. 首次运行时自动创建虚拟环境并安装依赖
+3. 稍等片刻，即可在视频同目录下生成最后一帧图片
 
-### 1. 环境准备
-- 安装 **Python 3.10+**。
-- 克隆或下载本项目到本地。
+---
 
-### 2. 安装依赖
-在项目根目录运行：
+## 💻 开发者部署
+
+### 环境要求
+- Python 3.10+
+
+### 安装与运行
 ```bash
+# 安装依赖
 pip install -r requirements.txt
-```
 
-### 2. 运行方式
-- **方式一：懒人模式（推荐）**
-  直接把视频文件拖拽到目录下的 `run.bat` 上。它会自动完成环境检测、依赖安装和视频处理。
-- **方式二：手动模式**
-  1. 创建并激活虚拟环境。
-  2. 安装依赖：`pip install -r requirements.txt`。
-  3. 运行脚本：`python extract_last_frame.py <视频文件路径> [输出图片路径]`
+# 运行
+python extract_last_frame.py <视频文件路径> [输出图片路径]
+```
 
 ---
 
 ## ✨ 功能特点
 
-- **极简操作**：支持鼠标拖拽，即使不懂技术也能轻松使用。
-- **完美兼容**：深度优化对**中文路径、中文文件名**的支持。
-- **格式丰富**：
-    - **视频库**：MP4, AVI, MKV, MOV, WMV 等。
-    - **图片库**：PNG (默认推荐), JPG, BMP 等。
-- **智能跳转**：自动计算视频总帧数，支持精确跳转至最后一帧。
+- 🖱️ **极简操作**：拖拽视频即可使用
+- 🌍 **跨平台**：支持 Windows、macOS、Linux
+- 📁 **中文路径**：完美支持中文文件名
+- 🎬 **格式丰富**：MP4, AVI, MKV, MOV, WMV 等
+- 🖼️ **输出格式**：PNG (默认), JPG, BMP
 
 ---
 
-## 🛠️ 进阶用法 (命令行)
+## 🛠️ 命令行用法
 
 ```bash
-# 基本用法（自动生成输出文件名：原视频名_last_frame.png）
-python extract_last_frame.py "我的视频.mp4"
+# 基本用法（自动生成输出文件名）
+python extract_last_frame.py "video.mp4"
 
 # 指定输出位置
-python extract_last_frame.py "video.mp4" "D:/Pictures/cover.jpg"
+python extract_last_frame.py "video.mp4" "output.png"
 ```
 
-### 作为模块在 Python 中调用
+### 作为 Python 模块调用
 ```python
 from extract_last_frame import extract_last_frame
 
-# 提取并获取保存路径
 final_path = extract_last_frame("demo.mp4")
 print(f"最后一帧已保存至: {final_path}")
 ```
