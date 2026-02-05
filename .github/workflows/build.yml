@@ -33,8 +33,11 @@ jobs:
       
       - name: 使用 PyInstaller 打包
         shell: pwsh
+        env:
+          PYTHONUTF8: '1'
+          PYTHONIOENCODING: 'utf-8'
         run: |
-          pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "favicon.ico" --console extract_last_frame.py
+          pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "favicon.ico" --console --runtime-hook "runtime_hook.py" extract_last_frame.py
       
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
