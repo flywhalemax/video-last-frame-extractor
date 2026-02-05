@@ -206,6 +206,10 @@ def extract_last_frame(video_path: str, output_path: str | None = None) -> str:
 
 def main():
     """命令行入口"""
+    # 强制设置控制台编码为 UTF-8，解决打包后的中文乱码问题
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+
     if len(sys.argv) < 2:
         print("使用方法: python extract_last_frame.py <视频文件路径> [输出图片路径]")
         print("示例:")
