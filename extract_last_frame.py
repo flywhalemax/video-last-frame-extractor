@@ -298,14 +298,21 @@ def main():
         show_sponsor_ad()
     except FileNotFoundError as e:
         print(f"❌ 错误: {e}")
+        input("\n按回车键退出...")
         sys.exit(1)
     except ValueError as e:
         print(f"❌ 错误: {e}")
+        input("\n按回车键退出...")
         sys.exit(1)
     except Exception as e:
         print(f"❌ 未知错误: {e}")
+        input("\n按回车键退出...")
         sys.exit(1)
+    
+    # 等待用户按键后再关闭窗口
+    input("\n按回车键退出...")
 
 
 if __name__ == "__main__":
     main()
+
