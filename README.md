@@ -65,6 +65,14 @@ python extract_last_frame.py "C:\Videos\my_video.mp4"
 # 输出：✅ 最后一帧已成功保存到: C:\Videos\my_video_last_frame.png
 ```
 
+## 下载 EXE（无需安装 Python）
+
+[![构建状态](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
+
+前往 [Releases](../../releases) 页面下载最新的 `视频最后一帧获取器.exe`，双击即可使用，无需安装任何依赖。
+
+**使用方法**：将视频文件拖拽到 EXE 文件上即可。
+
 ## 许可证
 
 MIT License
