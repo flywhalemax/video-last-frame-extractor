@@ -37,7 +37,7 @@ jobs:
           PYTHONUTF8: '1'
           PYTHONIOENCODING: 'utf-8'
         run: |
-          pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "favicon.ico" --console --runtime-hook "runtime_hook.py" extract_last_frame.py
+          pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "favicon2.ico" --console --runtime-hook "runtime_hook.py" extract_last_frame.py
       
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
