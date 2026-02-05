@@ -28,8 +28,13 @@ jobs:
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller Pillow
+          pip install pyinstaller Pillow cairosvg
           pip install -r requirements.txt
+      
+      - name: 转换 SVG 图标为 ICO
+        shell: pwsh
+        run: |
+          python -c "from PIL import Image; import cairosvg; cairosvg.svg2png(url='img.svg', write_to='icon.png', output_width=256, output_height=256); img = Image.open('icon.png'); img.save('icon.ico', format='ICO', sizes=[(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)])"
       
       - name: 使用 PyInstaller 打包
         shell: pwsh
@@ -37,7 +42,7 @@ jobs:
           PYTHONUTF8: '1'
           PYTHONIOENCODING: 'utf-8'
         run: |
-          pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "favicon.ico" --console --runtime-hook "runtime_hook.py" extract_last_frame.py
+          pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "icon.ico" --console --runtime-hook "runtime_hook.py" extract_last_frame.py
       
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
