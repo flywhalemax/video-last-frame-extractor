@@ -34,8 +34,7 @@ jobs:
       - name: 使用 PyInstaller 打包
         shell: pwsh
         run: |
-          pyinstaller --onefile --name "extractor" --icon "favicon.ico" --console extract_last_frame.py
-          mv dist/extractor.exe "dist/视频最后一帧获取器.exe"
+          pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "favicon.ico" --console extract_last_frame.py
       
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
@@ -48,6 +47,7 @@ jobs:
         if: github.event_name == 'release'
         shell: pwsh
         run: |
-          gh release upload ${{ github.event.release.tag_name }} "dist/视频最后一帧获取器.exe" --clobber
+          gh release upload ${{ github.event.release.tag_name }} "dist/VideoLastFrameExtractor.exe" --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
