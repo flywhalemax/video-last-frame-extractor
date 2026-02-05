@@ -14,7 +14,19 @@
 
 import sys
 import os
+import locale
 from pathlib import Path
+
+# 确保 Windows 下正确处理中文文件名
+# NOTE: 需要在导入其他库之前设置，否则可能不生效
+if sys.platform == 'win32':
+    # 设置控制台代码页为 UTF-8
+    os.system('chcp 65001 > nul 2>&1')
+    # 尝试设置 locale
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+    except locale.Error:
+        pass
 
 import cv2
 import numpy as np
@@ -209,6 +221,39 @@ def main():
     # 强制设置控制台编码为 UTF-8，解决打包后的中文乱码问题
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8')
+    
+    # Windows 下使用 ctypes 获取正确编码的命令行参数
+    # NOTE: sys.argv 在某些情况下可能无法正确解码中文
+    if sys.platform == 'win32' and len(sys.argv) > 1:
+        try:
+            import ctypes
+            from ctypes import wintypes
+            
+            # 获取命令行参数（Unicode 版本）
+            GetCommandLineW = ctypes.windll.kernel32.GetCommandLineW
+            GetCommandLineW.restype = wintypes.LPWSTR
+            
+            CommandLineToArgvW = ctypes.windll.shell32.CommandLineToArgvW
+            CommandLineToArgvW.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_int)]
+            CommandLineToArgvW.restype = ctypes.POINTER(wintypes.LPWSTR)
+            
+            LocalFree = ctypes.windll.kernel32.LocalFree
+            LocalFree.argtypes = [ctypes.c_void_p]
+            
+            cmd_line = GetCommandLineW()
+            argc = ctypes.c_int()
+            argv_ptr = CommandLineToArgvW(cmd_line, ctypes.byref(argc))
+            
+            if argv_ptr:
+                # 重新构建 sys.argv
+                new_argv = [argv_ptr[i] for i in range(argc.value)]
+                LocalFree(argv_ptr)
+                sys.argv = new_argv
+        except Exception:
+            # 如果失败，继续使用原始 sys.argv
+            pass
 
     if len(sys.argv) < 2:
         print("使用方法: python extract_last_frame.py <视频文件路径> [输出图片路径]")

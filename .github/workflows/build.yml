@@ -46,8 +46,8 @@ jobs:
       
       - name: 上传到 Release（仅在 Release 触发时）
         if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: dist/*.exe
+        shell: pwsh
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} "dist/视频最后一帧获取器.exe" --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
