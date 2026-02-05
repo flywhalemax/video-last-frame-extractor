@@ -225,8 +225,9 @@ def main():
         sys.stderr.reconfigure(encoding='utf-8')
     
     # Windows 下使用 ctypes 获取正确编码的命令行参数
-    # NOTE: sys.argv 在某些情况下可能无法正确解码中文
-    if sys.platform == 'win32' and len(sys.argv) > 1:
+    # NOTE: PyInstaller 打包后的 exe，sys.argv 可能无法正确解码中文路径
+    # 必须使用 Windows API 的 Unicode 版本来获取真正的 UTF-16 参数
+    if sys.platform == 'win32':
         try:
             import ctypes
             from ctypes import wintypes
@@ -246,13 +247,14 @@ def main():
             argc = ctypes.c_int()
             argv_ptr = CommandLineToArgvW(cmd_line, ctypes.byref(argc))
             
-            if argv_ptr:
-                # 重新构建 sys.argv
+            if argv_ptr and argc.value > 0:
+                # 重新构建 sys.argv，使用正确的 Unicode 字符串
                 new_argv = [argv_ptr[i] for i in range(argc.value)]
                 LocalFree(argv_ptr)
                 sys.argv = new_argv
-        except Exception:
+        except Exception as e:
             # 如果失败，继续使用原始 sys.argv
+            print(f"警告: 无法使用 Windows API 获取命令行参数: {e}")
             pass
 
     if len(sys.argv) < 2:
