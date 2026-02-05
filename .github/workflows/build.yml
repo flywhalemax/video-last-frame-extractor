@@ -34,8 +34,8 @@ jobs:
       - name: 使用 PyInstaller 打包
         shell: pwsh
         run: |
-          $env:PYTHONIOENCODING="utf-8"
-          pyinstaller --onefile --name "视频最后一帧获取器" --icon "favicon.ico" --console extract_last_frame.py
+          pyinstaller --onefile --name "extractor" --icon "favicon.ico" --console extract_last_frame.py
+          mv dist/extractor.exe "dist/视频最后一帧获取器.exe"
       
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
