@@ -221,9 +221,11 @@ def extract_last_frame(video_path: str, output_path: str | None = None) -> str:
         
         # 生成输出路径
         if output_path is None:
-            video_name = Path(video_path).stem
+            # 使用英文名称加时间戳，避免中文编码问题
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             video_dir = Path(video_path).parent
-            output_path = str(video_dir / f"{video_name}_last_frame.png")
+            output_path = str(video_dir / f"VideoLastFrame_{timestamp}.png")
         
         # 保存图片（支持中文路径）
         success = save_image_chinese_path(frame, output_path)
