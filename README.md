@@ -31,15 +31,24 @@ _请复制此地址在浏览器中打开：_ `SKYLUMO.CC`
 
 [![构建状态](../../actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
 
+## 📥 下载与运行 (推荐：.exe 绿色版)
+
+1. 前往 [Releases](https://github.com/flywhalemax/video-last-frame-extractor/releases) 页面下载最新的 `VideoLastFrameExtractor.exe`。
+2. **运行说明**：
+   - 双击运行时，如果出现 **"Windows 已保护你的电脑"** 提示：
+     - 点击 **“更多信息”**。
+     - 点击 **“仍要运行”** 即可。
+   - 这是因为程序未经过昂贵的开发者签名，属于正常现象。
+
 ---
 
-## 🚀 快速开始 (小白/免安装版)
+## 🚀 快速开始 (源码运行版)
 
-如果您不想安装 Python 或配置环境，直接下载打包好的可执行文件即可：
+您可以直接使用源码提供的 `run.bat` 脚本，它会自动处理所有环境配置：
 
-1. 前往 [Releases](../../releases) 页面。
-2. 下载最新的 `视频最后一帧获取器.exe`。
-3. **直接将视频文件拖拽到该 EXE 文件上**，即可在视频同目录下生成最后一帧图片。
+1. **直接将视频文件拖拽到 `run.bat` 文件上**。
+2. 首次运行时，脚本会自动创建虚拟环境并安装所需的运行库（需联网且系统已安装 Python）。
+3. 稍等片刻，即可在视频同目录下生成最后一帧图片。
 
 ---
 
@@ -57,13 +66,13 @@ _请复制此地址在浏览器中打开：_ `SKYLUMO.CC`
 pip install -r requirements.txt
 ```
 
-### 3. 运行方式
-- **方式一：拖拽使用**
-  直接把视频文件拖拽到目录下的 `run.bat` 上。
-- **方式二：命令行运行**
-  ```bash
-  python extract_last_frame.py <视频文件路径> [输出图片路径]
-  ```
+### 2. 运行方式
+- **方式一：懒人模式（推荐）**
+  直接把视频文件拖拽到目录下的 `run.bat` 上。它会自动完成环境检测、依赖安装和视频处理。
+- **方式二：手动模式**
+  1. 创建并激活虚拟环境。
+  2. 安装依赖：`pip install -r requirements.txt`。
+  3. 运行脚本：`python extract_last_frame.py <视频文件路径> [输出图片路径]`
 
 ---
 
