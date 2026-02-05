@@ -12,21 +12,42 @@
     python extract_last_frame.py video.mp4 last_frame.png
 """
 
+# ============================================================
+# 关键：在任何 import 之前设置 UTF-8 模式
+# 这对于 PyInstaller 打包后的 exe 正确处理中文至关重要
+# ============================================================
 import sys
 import os
-import locale
-from pathlib import Path
 
-# 确保 Windows 下正确处理中文文件名
-# NOTE: 需要在导入其他库之前设置，否则可能不生效
+# 设置 Python UTF-8 模式（Python 3.7+）
+os.environ['PYTHONUTF8'] = '1'
+os.environ['PYTHONIOENCODING'] = 'utf-8'
+
+# Windows 特殊处理
 if sys.platform == 'win32':
     # 设置控制台代码页为 UTF-8
     os.system('chcp 65001 > nul 2>&1')
-    # 尝试设置 locale
-    try:
-        locale.setlocale(locale.LC_ALL, '')
-    except locale.Error:
-        pass
+    
+    # 强制使用 UTF-8 编码
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+    if hasattr(sys.stderr, 'reconfigure'):
+        try:
+            sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+
+import locale
+from pathlib import Path
+
+# 尝试设置 locale
+try:
+    locale.setlocale(locale.LC_ALL, '')
+except locale.Error:
+    pass
 
 import cv2
 import numpy as np
@@ -218,12 +239,6 @@ def extract_last_frame(video_path: str, output_path: str | None = None) -> str:
 
 def main():
     """命令行入口"""
-    # 强制设置控制台编码为 UTF-8，解决打包后的中文乱码问题
-    if hasattr(sys.stdout, 'reconfigure'):
-        sys.stdout.reconfigure(encoding='utf-8')
-    if hasattr(sys.stderr, 'reconfigure'):
-        sys.stderr.reconfigure(encoding='utf-8')
-    
     # Windows 下使用 ctypes 获取正确编码的命令行参数
     # NOTE: PyInstaller 打包后的 exe，sys.argv 可能无法正确解码中文路径
     # 必须使用 Windows API 的 Unicode 版本来获取真正的 UTF-16 参数
@@ -248,8 +263,14 @@ def main():
             argv_ptr = CommandLineToArgvW(cmd_line, ctypes.byref(argc))
             
             if argv_ptr and argc.value > 0:
-                # 重新构建 sys.argv，使用正确的 Unicode 字符串
-                new_argv = [argv_ptr[i] for i in range(argc.value)]
+                # 重要：需要复制字符串，因为之后要释放内存
+                # 使用 str() 创建 Python 字符串的副本
+                new_argv = []
+                for i in range(argc.value):
+                    arg = argv_ptr[i]
+                    # 创建字符串副本
+                    new_argv.append(str(arg) if arg else '')
+                
                 LocalFree(argv_ptr)
                 sys.argv = new_argv
         except Exception as e:
