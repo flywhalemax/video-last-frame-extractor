@@ -1,4 +1,4 @@
-name: 构建 EXE 可执行文件
+name: 构建多平台可执行文件
 
 on:
   # 创建 Release 时自动触发
@@ -13,7 +13,24 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows
+            artifact_name: VideoLastFrameExtractor.exe
+            asset_name: VideoLastFrameExtractor.exe
+          - os: macos-latest
+            name: macOS
+            artifact_name: VideoLastFrameExtractor
+            asset_name: VideoLastFrameExtractor-macos
+          - os: ubuntu-latest
+            name: Linux
+            artifact_name: VideoLastFrameExtractor
+            asset_name: VideoLastFrameExtractor-linux
+    
+    runs-on: ${{ matrix.os }}
+    name: 构建 ${{ matrix.name }} 版本
     
     steps:
       - name: 检出代码
@@ -31,7 +48,8 @@ jobs:
           pip install pyinstaller Pillow
           pip install -r requirements.txt
       
-      - name: 使用 PyInstaller 打包
+      - name: 使用 PyInstaller 打包 (Windows)
+        if: matrix.os == 'windows-latest'
         shell: pwsh
         env:
           PYTHONUTF8: '1'
@@ -39,18 +57,30 @@ jobs:
         run: |
           pyinstaller --onefile --name "VideoLastFrameExtractor" --icon "favicon2.ico" --console --runtime-hook "runtime_hook.py" extract_last_frame.py
       
+      - name: 使用 PyInstaller 打包 (macOS/Linux)
+        if: matrix.os != 'windows-latest'
+        env:
+          PYTHONUTF8: '1'
+          PYTHONIOENCODING: 'utf-8'
+        run: |
+          pyinstaller --onefile --name "VideoLastFrameExtractor" --console --runtime-hook "runtime_hook.py" extract_last_frame.py
+      
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: video-last-frame-extractor-exe
-          path: dist/*.exe
+          name: ${{ matrix.asset_name }}
+          path: dist/${{ matrix.artifact_name }}
           retention-days: 90
       
       - name: 上传到 Release（仅在 Release 触发时）
         if: github.event_name == 'release'
-        shell: pwsh
+        shell: bash
         run: |
-          gh release upload ${{ github.event.release.tag_name }} "dist/VideoLastFrameExtractor.exe" --clobber
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            gh release upload ${{ github.event.release.tag_name }} "dist/${{ matrix.artifact_name }}" --clobber
+          else
+            mv "dist/${{ matrix.artifact_name }}" "dist/${{ matrix.asset_name }}"
+            gh release upload ${{ github.event.release.tag_name }} "dist/${{ matrix.asset_name }}" --clobber
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
